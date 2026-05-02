@@ -33,7 +33,7 @@ One language across the entire stack. No context switching.
 
 | Phase | What | Status |
 |-------|------|--------|
-| 1 | Docker setup, DB schema, HDFC CSV parser, `/upload` endpoint | ✅ Done |
+| 1 | Docker setup, DB schema, HDFC XLS parser, `/upload` endpoint | ✅ Done |
 | 2 | 3-pass categorization engine (history → keywords → Gemini) | 🔜 Next |
 | 3 | Review UI (React, mobile-first) | ⬜ Planned |
 | 4 | Dashboard (Recharts, budgets, filters) | ⬜ Planned |
@@ -50,8 +50,8 @@ One language across the entire stack. No context switching.
 ### Run locally
 
 ```bash
-git clone https://github.com/your-username/hisaab.git
-cd hisaab
+git clone https://github.com/Karthick-1501/Hisaab.git
+cd Hisaab
 cp .env.example .env
 docker-compose up --build
 ```
@@ -115,7 +115,7 @@ Add your own aliases by editing `categories.json` — no code changes needed.
 
 | Bank | Format | Status |
 |------|--------|--------|
-| HDFC | CSV | ✅ Phase 1 |
+| HDFC | XLS | ✅ Phase 1 |
 | SBI | PDF | 🔜 Phase 5 |
 | Axis | CSV | 🔜 Phase 5 |
 | Paytm | CSV | 🔜 Phase 5 |
@@ -136,14 +136,16 @@ Add your own aliases by editing `categories.json` — no code changes needed.
 
 ---
 
-## Reference
+## Author
 
-Categorization logic and transfer detection approach inspired by  
-[nagendra333333/AI-Driven-Expense-Tracker-Public](https://github.com/nagendra333333/AI-Driven-Expense-Tracker-Public) (Python + CLI).  
-Hisaab is an independent JavaScript rewrite — redesigned as a full-stack web app with a daily review UI, PostgreSQL persistence, and mobile-first frontend.
+Designed and Developed by Karthick.
+
+- Website: [karthick.at](https://karthick.at/)
+- LinkedIn: [linkedin.com/in/karthicks1520](https://www.linkedin.com/in/karthicks1520/)
+
 
 ---
 
 ## License
 
-MIT — personal use, do whatever you want with it.
+MIT — personal use, do whatever you want with it :) 
