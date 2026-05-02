@@ -1,0 +1,40 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: money_manager_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: mmuser
+      POSTGRES_PASSWORD: mmpass
+      POSTGRES_DB: money_manager
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: money_manager_backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://mmuser:mmpass@db:5432/money_manager
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      PORT: 3001
+      NODE_ENV: development
+    ports:
+      - '3001:3001'
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - ./categories.json:/app/categories.json
+    depends_on:
+      - db
+    command: node --watch index.js   # Node 18+ built-in watch (no nodemon needed)
+
+volumes:
+  pgdata:

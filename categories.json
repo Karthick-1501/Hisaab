@@ -1,0 +1,14 @@
+{
+  "Food & Dining":     ["swiggy", "zomato", "priya mess", "murugan mess", "hotel", "mess", "foods", "cafe", "restaurant", "biryani", "tiffin", "lunch", "dinner", "eat"],
+  "Groceries":         ["sudhakar", "provision", "supermarket", "bigbasket", "blinkit", "grocery", "stores", "mart", "kirana", "vegetables", "fruits"],
+  "Transport":         ["uber", "ola", "rapido", "metro", "bus", "auto", "cab", "taxi", "train", "irctc", "redbus"],
+  "Fuel":              ["petrol", "bpcl", "hpcl", "iocl", "fuel", "pump", "hp petrol", "indian oil"],
+  "Bills & Utilities": ["airtel", "jio", "bsnl", "tneb", "electricity", "water", "broadband", "recharge", "topup", "vi ", "vodafone", "postpaid"],
+  "Medical":           ["pharmacy", "medical", "hospital", "clinic", "apollo", "chemist", "netmeds", "1mg", "pharmeasy", "doctor", "diagnostic", "lab"],
+  "Investment":        ["groww", "zerodha", "sip", "mutual fund", "nps", "lic", "kuvera", "coin", "smallcase", "ppf", "epf"],
+  "Shopping":          ["amazon", "flipkart", "myntra", "reliance", "dmart", "nykaa", "meesho", "ajio", "tata cliq", "snapdeal"],
+  "Entertainment":     ["netflix", "hotstar", "spotify", "prime", "movie", "pvr", "inox", "bookmyshow", "youtube", "zee5", "sonyliv"],
+  "Drink":             ["tasmac", "beer", "wine", "liquor", "bar", "pub"],
+  "Education":         ["udemy", "coursera", "byju", "unacademy", "college", "fee", "school", "tuition"],
+  "Other":             []
+}
