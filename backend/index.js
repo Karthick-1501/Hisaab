@@ -2,6 +2,7 @@ import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import uploadRouter from './routes/upload.js';
+import reviewRouter from './routes/review.js';
 import pool from './db.js';
 
 const app = express();
@@ -13,9 +14,9 @@ app.use(express.json());
 
 // ── Routes ────────────────────────────────────────────────
 app.use('/upload', uploadRouter);
+app.use('/review', reviewRouter);
 
-// Phase 2+ routes (stubs — wired in later phases)
-// app.use('/review',       reviewRouter);
+// Phase 3+ routes (stubs — wired in later phases)
 // app.use('/transactions', transactionsRouter);
 // app.use('/dashboard',    dashboardRouter);
 // app.use('/budgets',      budgetsRouter);
@@ -44,6 +45,8 @@ app.use((err, _req, res, _next) => {
 // ── Start ─────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`✅ Money Manager backend running on http://localhost:${PORT}`);
-  console.log(`   Health: http://localhost:${PORT}/health`);
-  console.log(`   Upload: POST http://localhost:${PORT}/upload`);
+  console.log(`   Health:  GET  http://localhost:${PORT}/health`);
+  console.log(`   Upload:  POST http://localhost:${PORT}/upload`);
+  console.log(`   Pending: GET  http://localhost:${PORT}/review/pending`);
+  console.log(`   Confirm: PATCH http://localhost:${PORT}/review/:id`);
 });

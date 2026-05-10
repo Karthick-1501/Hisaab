@@ -2,6 +2,8 @@ import express from 'express';
 import multer from 'multer';
 import { detectAndParse } from '../parsers/index.js';
 import { query } from '../db.js';
+import { detectTransfers } from '../services/transferDetector.js';
+import { categorizeTransactions } from '../services/categorize.js';
 
 const router = express.Router();
 
@@ -22,7 +24,8 @@ const upload = multer({
 /**
  * POST /upload
  * Accepts a bank statement file.
- * Parses it, inserts transactions into DB, returns summary.
+ * Parses → inserts → detects transfers → categorizes (3-pass).
+ * Returns a full summary of what happened.
  */
 router.post('/', upload.single('statement'), async (req, res) => {
   if (!req.file) {
@@ -32,7 +35,7 @@ router.post('/', upload.single('statement'), async (req, res) => {
   const { originalname, buffer, mimetype } = req.file;
 
   try {
-    // 1. Detect bank + parse into transaction objects
+    // ── Step 1: Parse ─────────────────────────────────────
     const { bank, transactions } = detectAndParse(buffer, originalname, mimetype);
 
     if (!transactions.length) {
@@ -42,17 +45,37 @@ router.post('/', upload.single('statement'), async (req, res) => {
       });
     }
 
-    // 2. Bulk insert — skip duplicates (same date + merchant + amount + bank)
-    const inserted = await bulkInsert(transactions);
+    // ── Step 2: Insert (skip duplicates) ──────────────────
+    const insertedIds = await bulkInsert(transactions);
+
+    if (!insertedIds.length) {
+      return res.status(200).json({
+        message: 'No new transactions — all rows already exist in DB.',
+        bank,
+        filename: originalname,
+        parsed: transactions.length,
+        inserted: 0,
+        skipped: transactions.length,
+      });
+    }
+
+    // ── Step 3: Transfer detection ────────────────────────
+    const transferCount = await detectTransfers(insertedIds);
+
+    // ── Step 4: 3-pass categorization ─────────────────────
+    const categorizeSummary = await categorizeTransactions(insertedIds);
 
     return res.status(200).json({
       message: 'Upload successful',
       bank,
       filename: originalname,
       parsed: transactions.length,
-      inserted: inserted.count,
-      skipped: transactions.length - inserted.count,
-      sample: transactions.slice(0, 3), // preview first 3 rows
+      inserted: insertedIds.length,
+      skipped: transactions.length - insertedIds.length,
+      transfers_detected: transferCount,
+      categorization: categorizeSummary,
+      pending_review: (categorizeSummary?.pass2 ?? 0) + (categorizeSummary?.pass3 ?? 0),
+      sample: transactions.slice(0, 3),
     });
 
   } catch (err) {
@@ -63,25 +86,28 @@ router.post('/', upload.single('statement'), async (req, res) => {
 
 // ── helpers ───────────────────────────────────────────────
 
+/**
+ * Bulk insert transactions, skip duplicates.
+ * Returns array of inserted IDs (not skipped ones).
+ */
 async function bulkInsert(transactions) {
-  let count = 0;
+  const insertedIds = [];
 
-  // Insert one by one with conflict skip.
-  // For Phase 1 this is fine — transactions per upload are small.
-  // Phase 2+ can batch with unnest() if needed.
   for (const txn of transactions) {
     const result = await query(
       `INSERT INTO transactions
          (date, merchant_raw, amount, debit_credit, bank, source_file)
        VALUES ($1, $2, $3, $4, $5, $6)
-       ON CONFLICT DO NOTHING
+       ON CONFLICT (date, merchant_raw, amount, debit_credit, bank) DO NOTHING
        RETURNING id`,
       [txn.date, txn.merchant_raw, txn.amount, txn.debit_credit, txn.bank, txn.source_file]
     );
-    if (result.rowCount > 0) count++;
+    if (result.rowCount > 0) {
+      insertedIds.push(result.rows[0].id);
+    }
   }
 
-  return { count };
+  return insertedIds;
 }
 
 export default router;

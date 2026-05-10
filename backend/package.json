@@ -1,14 +1,15 @@
 {
   "name": "money-manager-backend",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
-  "description": "Money Manager backend — Phase 1",
+  "description": "Money Manager backend — Phase 2 (3-pass categorization)",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.21.0",
     "cors": "^2.8.6",
     "dotenv": "^16.6.1",
     "express": "^4.22.1",

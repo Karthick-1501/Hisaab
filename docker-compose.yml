@@ -10,7 +10,7 @@ services:
       POSTGRES_PASSWORD: mmpass
       POSTGRES_DB: money_manager
     ports:
-      - '5432:5432'
+      - '5433:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./backend/db/init.sql:/docker-entrypoint-initdb.d/init.sql
