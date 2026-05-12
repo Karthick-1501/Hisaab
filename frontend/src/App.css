@@ -1,0 +1,96 @@
+/* ── App Layout ─────────────────────────────────────────── */
+
+.main {
+  flex: 1;
+  padding-top: var(--space-lg);
+  padding-bottom: calc(var(--space-2xl) * 2);
+}
+
+/* ── Transaction list ──────────────────────────────────── */
+
+.txn-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* ── Bulk accept bar ───────────────────────────────────── */
+
+.bulk-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  margin-bottom: var(--space-md);
+  background: var(--accent-subtle);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: var(--radius-md);
+}
+
+.bulk-bar__text {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.bulk-bar__text strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.bulk-bar__button {
+  padding: 6px 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border-radius: var(--radius-pill);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.bulk-bar__button:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-glow);
+}
+
+/* ── Error banner ──────────────────────────────────────── */
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+  background: var(--danger-bg);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  color: var(--danger);
+}
+
+.error-banner__retry {
+  padding: 4px 14px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-pill);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.error-banner__retry:hover {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+
+@media (min-width: 768px) {
+  .main {
+    padding-top: var(--space-xl);
+  }
+}

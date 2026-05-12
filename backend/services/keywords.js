@@ -5,7 +5,7 @@ import { dirname, join } from 'path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Load categories.json once at startup — no hot reload needed
-const CATEGORIES_PATH = join(__dirname, '../../categories.json');
+const CATEGORIES_PATH = join(__dirname, '../categories.json');
 let categoryMap = null;
 
 function loadCategories() {

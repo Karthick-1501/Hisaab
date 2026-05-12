@@ -12,6 +12,7 @@ Built from scratch in JavaScript (Node.js + React + PostgreSQL). No subscription
 - Auto-categorizes transactions using a **3-pass engine** — history lookup → keyword rules → Gemini AI (AI only fires for unknowns)
 - Detects and strips bank-to-bank transfers so they don't double-count
 - Review queue: confirm or correct AI suggestions before they hit the dashboard
+- Bulk accept high-confidence suggestions in one click
 - Dashboard with spend breakdown, budget tracking, and 6-month history *(Phase 4)*
 
 ---
@@ -19,7 +20,7 @@ Built from scratch in JavaScript (Node.js + React + PostgreSQL). No subscription
 ## Stack
 
 ```
-Frontend   React + Vite          (Phase 3)
+Frontend   React + Vite          ✅ Live
 Backend    Node.js + Express     ✅ Live
 Database   PostgreSQL            ✅ Live
 AI         Gemini 2.0 Flash API  ✅ Live (free tier — 15 req/min)
@@ -35,8 +36,8 @@ One language across the entire stack. No context switching.
 |-------|------|--------|
 | 1 | Docker setup, DB schema, HDFC XLS parser, `/upload` endpoint | ✅ Done |
 | 2 | 3-pass categorization engine, transfer detection, `/review` endpoints | ✅ Done |
-| 3 | Review UI (React, mobile-first) | 🔜 Next |
-| 4 | Dashboard (Recharts, budgets, filters) | ⬜ Planned |
+| 3 | Review UI (React, dark theme, mobile-first), upload UI, bulk accept | ✅ Done |
+| 4 | Dashboard (Recharts, budgets, filters) | 🔜 Next |
 | 5 | SBI / Axis / Paytm parsers, Vercel + Render deploy | ⬜ Planned |
 
 ---
@@ -58,6 +59,8 @@ docker-compose up --build
 ```
 
 Backend starts at `http://localhost:3001`.  
+Frontend starts at `http://localhost:5173`.
+
 Check it's alive:
 
 ```bash
@@ -73,6 +76,8 @@ docker exec -i money_manager_db psql -U mmuser -d money_manager < migration-phas
 
 ### Upload a statement
 
+Either use the drag-and-drop UI at `http://localhost:5173`, or:
+
 ```bash
 curl -X POST http://localhost:3001/upload \
   -F "statement=@/path/to/hdfc_statement.xls"
@@ -80,19 +85,9 @@ curl -X POST http://localhost:3001/upload \
 
 Response includes parsed count, inserted count, transfers detected, and categorization breakdown across all 3 passes.
 
-### Check pending review queue
+### Review in the UI
 
-```bash
-curl http://localhost:3001/review/pending
-```
-
-### Confirm a category
-
-```bash
-curl -X PATCH http://localhost:3001/review/42 \
-  -H "Content-Type: application/json" \
-  -d '{"category": "Food & Dining"}'
-```
+Open `http://localhost:5173` — pending transactions appear as cards with AI suggestions and confidence scores. Quick-confirm with the checkmark button, or tap a card to expand the full category picker.
 
 ---
 
@@ -113,8 +108,10 @@ curl -X PATCH http://localhost:3001/review/42 \
 | GET | `/health` | Health check — DB connectivity |
 | POST | `/upload` | Accept XLS/CSV, parse, detect transfers, run 3-pass categorization |
 | GET | `/review/pending` | All unreviewed transactions, newest first |
+| GET | `/review/stats` | Summary counts: pending, reviewed today, auto-confirmed, total |
 | GET | `/review/categories` | Valid category list |
 | PATCH | `/review/:id` | Confirm a category, upsert merchant dictionary |
+| PATCH | `/review` | Bulk confirm multiple transactions with the same category |
 
 ---
 

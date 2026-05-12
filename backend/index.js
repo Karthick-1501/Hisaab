@@ -9,17 +9,26 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // ── Middleware ────────────────────────────────────────────
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:5173',   // Vite dev server
+    'http://localhost:4173',   // Vite preview
+    'http://localhost:3000',   // fallback
+  ],
+  credentials: true,
+}));
 app.use(express.json());
+
+import transactionsRouter from './routes/transactions.js';
+import dashboardRouter from './routes/dashboard.js';
+import budgetsRouter from './routes/budgets.js';
 
 // ── Routes ────────────────────────────────────────────────
 app.use('/upload', uploadRouter);
 app.use('/review', reviewRouter);
-
-// Phase 3+ routes (stubs — wired in later phases)
-// app.use('/transactions', transactionsRouter);
-// app.use('/dashboard',    dashboardRouter);
-// app.use('/budgets',      budgetsRouter);
+app.use('/transactions', transactionsRouter);
+app.use('/dashboard', dashboardRouter);
+app.use('/budgets', budgetsRouter);
 
 // ── Health check ──────────────────────────────────────────
 app.get('/health', async (_req, res) => {
@@ -44,7 +53,7 @@ app.use((err, _req, res, _next) => {
 
 // ── Start ─────────────────────────────────────────────────
 app.listen(PORT, () => {
-  console.log(`✅ Money Manager backend running on http://localhost:${PORT}`);
+  console.log(`✅ Hisaab backend running on http://localhost:${PORT}`);
   console.log(`   Health:  GET  http://localhost:${PORT}/health`);
   console.log(`   Upload:  POST http://localhost:${PORT}/upload`);
   console.log(`   Pending: GET  http://localhost:${PORT}/review/pending`);

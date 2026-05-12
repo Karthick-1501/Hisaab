@@ -41,6 +41,47 @@ router.get('/pending', async (_req, res) => {
 });
 
 /**
+ * GET /review/stats
+ *
+ * Returns summary counts for the review dashboard header.
+ * Response: { pending, reviewed_today, total, auto_confirmed }
+ */
+router.get('/stats', async (_req, res) => {
+  try {
+    const pending = await query(
+      `SELECT COUNT(*) as count FROM transactions
+       WHERE reviewed = false AND is_transfer = false`
+    );
+
+    const reviewedToday = await query(
+      `SELECT COUNT(*) as count FROM transactions
+       WHERE reviewed = true AND is_transfer = false
+         AND created_at::date = CURRENT_DATE`
+    );
+
+    const total = await query(
+      `SELECT COUNT(*) as count FROM transactions
+       WHERE is_transfer = false`
+    );
+
+    const autoConfirmed = await query(
+      `SELECT COUNT(*) as count FROM merchant_map
+       WHERE hit_count >= 3`
+    );
+
+    res.json({
+      pending: parseInt(pending.rows[0].count),
+      reviewed_today: parseInt(reviewedToday.rows[0].count),
+      total: parseInt(total.rows[0].count),
+      auto_confirmed: parseInt(autoConfirmed.rows[0].count),
+    });
+  } catch (err) {
+    console.error('[Review] GET /stats error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
  * PATCH /review/:id
  *
  * Confirm or correct a transaction's category.
@@ -126,6 +167,69 @@ router.patch('/:id', async (req, res) => {
 
   } catch (err) {
     console.error('[Review] PATCH error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/**
+ * PATCH /review/bulk
+ *
+ * Confirm multiple transactions at once with the same category.
+ * Body: { "ids": [1, 2, 3], "category": "Food & Dining" }
+ *
+ * Useful for accepting all high-confidence keyword matches in one action.
+ */
+router.patch('/', async (req, res) => {
+  const { ids, category } = req.body;
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ error: 'Body must include: { "ids": [...], "category": "..." }' });
+  }
+
+  if (!category || typeof category !== 'string') {
+    return res.status(400).json({ error: 'Body must include: { "category": "..." }' });
+  }
+
+  const validCategories = getCategories();
+  if (!validCategories.includes(category)) {
+    return res.status(400).json({
+      error: `Unknown category "${category}". Valid: ${validCategories.join(', ')}`,
+    });
+  }
+
+  try {
+    // 1. Update all transactions
+    const result = await query(
+      `UPDATE transactions
+       SET category = $1, reviewed = true
+       WHERE id = ANY($2::int[]) AND reviewed = false
+       RETURNING id, merchant_raw`,
+      [category, ids]
+    );
+
+    // 2. Upsert merchant_map for each unique merchant
+    const merchants = [...new Set(result.rows.map(r => r.merchant_raw))];
+    for (const merchant of merchants) {
+      await query(
+        `INSERT INTO merchant_map (merchant_raw, category, hit_count, updated_at)
+         VALUES ($1, $2, 1, NOW())
+         ON CONFLICT (merchant_raw)
+         DO UPDATE SET
+           category   = EXCLUDED.category,
+           hit_count  = merchant_map.hit_count + 1,
+           updated_at = NOW()`,
+        [merchant, category]
+      );
+    }
+
+    res.json({
+      confirmed: result.rowCount,
+      category,
+      ids: result.rows.map(r => r.id),
+    });
+
+  } catch (err) {
+    console.error('[Review] PATCH /bulk error:', err.message);
     res.status(500).json({ error: err.message });
   }
 });

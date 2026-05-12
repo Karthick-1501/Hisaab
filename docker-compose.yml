@@ -36,5 +36,21 @@ services:
       - db
     command: node --watch index.js   # Node 18+ built-in watch (no nodemon needed)
 
+  frontend:
+    image: node:20-alpine
+    container_name: money_manager_frontend
+    restart: unless-stopped
+    working_dir: /app
+    environment:
+      VITE_API_URL: http://localhost:3001
+    ports:
+      - '5173:5173'
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+
 volumes:
   pgdata:

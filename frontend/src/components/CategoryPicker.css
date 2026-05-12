@@ -1,0 +1,50 @@
+/* ── Category Picker ────────────────────────────────────── */
+
+.cat-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.cat-chip:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--chip-color) 15%, transparent);
+  border-color: color-mix(in srgb, var(--chip-color) 40%, transparent);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.cat-chip--selected {
+  background: color-mix(in srgb, var(--chip-color) 18%, transparent);
+  border-color: color-mix(in srgb, var(--chip-color) 50%, transparent);
+  color: var(--text-primary);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--chip-color) 20%, transparent);
+}
+
+.cat-chip:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.cat-chip__icon {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.cat-chip__label {
+  line-height: 1;
+}

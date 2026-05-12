@@ -14,7 +14,6 @@ export function detectAndParse(fileBuffer, filename, mimetype) {
   if (
     mimetype === 'application/vnd.ms-excel' ||
     mimetype === 'application/xls' ||
-    mimetype === 'application/octet-stream' && lower.endsWith('.xls') ||
     lower.endsWith('.xls')
   ) {
     // XLS is always HDFC for now — detect by content if needed in Phase 5

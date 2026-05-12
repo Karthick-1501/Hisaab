@@ -1,0 +1,29 @@
+/* ── Confidence Bar ─────────────────────────────────────── */
+
+.confidence {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.confidence__track {
+  width: 48px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.confidence__fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.confidence__label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  min-width: 28px;
+}

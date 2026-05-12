@@ -1,0 +1,135 @@
+/* ── Dashboard ────────────────────────────────────────── */
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding-bottom: var(--space-2xl);
+}
+
+.dashboard__kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-md);
+}
+
+.kpi-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.kpi-card__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.kpi-card__value {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.kpi-card__value--danger {
+  color: var(--danger);
+}
+
+.kpi-card__value--success {
+  color: var(--success);
+}
+
+.dashboard__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+}
+
+@media (min-width: 768px) {
+  .dashboard__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.dashboard-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-panel--full {
+  grid-column: 1 / -1;
+}
+
+.dashboard-panel__title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--space-md);
+}
+
+.dashboard-panel__chart {
+  flex: 1;
+  min-height: 250px;
+}
+
+/* ── Budget List ───────────────────────────────────────── */
+
+.budget-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.budget-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.budget-item__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.budget-item__category {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.budget-item__amounts {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.budget-item__track {
+  height: 8px;
+  background: var(--bg-input);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.budget-item__fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease-out;
+}
+
+.budget-item__fill--danger {
+  background: var(--danger) !important;
+}
+
+.text-danger {
+  color: var(--danger);
+}

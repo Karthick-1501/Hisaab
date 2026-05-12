@@ -31,7 +31,8 @@ CREATE TABLE IF NOT EXISTS bank_transfers (
   amount          NUMERIC(10,2) NOT NULL,
   from_bank       VARCHAR(50),
   to_bank         VARCHAR(50),
-  created_at      TIMESTAMPTZ DEFAULT NOW()
+  created_at      TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(date, amount, from_bank, to_bank)
 );
 
 CREATE TABLE IF NOT EXISTS budgets (
